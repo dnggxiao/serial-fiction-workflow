@@ -1,0 +1,22 @@
+# Python generated files
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Build and release output
+dist/
+build/
+*.egg-info/
+
+# Editor and operating-system files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Private/local project state
+工作区/skill-evals-private/
+.env
+.env.*

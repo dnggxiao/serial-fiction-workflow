@@ -1,0 +1,6 @@
+name: writing-serial-fiction
+description: Controlled AI workflow for long-form serial fiction writing with chapter planning, prose generation, and quality checks.
+
+metadata:
+  display_name: Writing Serial Fiction
+  short_description: Long-form fiction workflow with continuity control
