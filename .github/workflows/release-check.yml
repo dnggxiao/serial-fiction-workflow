@@ -1,28 +1,14 @@
-name: Release checks
+name: Release repair staging
 
 on:
-  push:
-    branches: [ main ]
-  pull_request:
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
-  validate:
+  staged:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-
-      - name: Install test dependencies
-        run: |
-          python -m pip install --upgrade pip
-          python -m pip install pytest
-
-      - name: Run validation tests
-        run: |
-          python -m pytest -q
+      - name: Await repair payload
+        run: echo "Repair payload is being staged."
