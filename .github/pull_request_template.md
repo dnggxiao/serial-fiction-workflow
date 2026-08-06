@@ -1,15 +1,14 @@
-# Pull Request
+## What changed
 
-## Summary
+## Why
 
-Describe the change.
+## User or workflow impact
 
-## Testing
+## Checks
 
-Describe validation performed.
+- [ ] `python -m pytest -q -p no:cacheprovider`
+- [ ] No private manuscript content or credentials included
+- [ ] No `__pycache__`, `.pyc`, or `.pytest_cache` included
+- [ ] Current-release metadata remains version-consistent
 
-## Checklist
-
-- [ ] I updated documentation if needed.
-- [ ] I did not include private story content.
-- [ ] I verified the workflow still works.
+## Compatibility notes

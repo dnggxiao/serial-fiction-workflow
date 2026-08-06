@@ -1,6 +1,7 @@
-name: writing-serial-fiction
-description: Controlled AI workflow for long-form serial fiction writing with chapter planning, prose generation, and quality checks.
+interface:
+  display_name: "中文连载小说写作引擎"
+  short_description: "规划、写作与诊断中文连载章节，并抑制讲义化和机械AI感"
+  default_prompt: "使用 $writing-serial-fiction 选择一种模式，规划、写作或只读诊断中文连载小说章节。"
 
-metadata:
-  display_name: Writing Serial Fiction
-  short_description: Long-form fiction workflow with continuity control
+policy:
+  allow_implicit_invocation: false
